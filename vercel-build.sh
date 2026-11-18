@@ -2,7 +2,13 @@
 set -euo pipefail
 
 if [[ -z "${API_BASE_URL:-}" ]]; then
-  echo "Set API_BASE_URL to the deployed Next.js backend URL in Vercel." >&2
+  echo "Set API_BASE_URL to the deployed Next.js backend origin in Vercel." >&2
+  exit 1
+fi
+
+api_base_url="${API_BASE_URL%/}"
+if [[ "${api_base_url,,}" =~ ^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?(/|$) ]]; then
+  echo "API_BASE_URL points to localhost. Vercel visitors cannot access your computer; deploy the backend and use its public HTTPS origin." >&2
   exit 1
 fi
 
