@@ -154,7 +154,12 @@ class _VisitorHomeState extends State<VisitorHome> {
         message.contains('clientexception') ||
         message.contains('connection refused') ||
         message.contains('network is unreachable')) {
-      return 'Could not connect to the park content server at ${_api.baseUrl}. Start the CMS/API server at http://localhost:3000 and allow the local Flutter web origin in its CORS settings, or run Flutter with --dart-define=API_BASE_URL=<server-url>.';
+      final isLocal =
+          Uri.base.host == 'localhost' || Uri.base.host == '127.0.0.1';
+      if (isLocal) {
+        return 'Could not connect to the park API at ${_api.baseUrl}. Make sure the backend is running at http://localhost:3000.';
+      }
+      return 'Could not reach the park API at ${_api.baseUrl}. Check that the Flutter Vercel project has the correct API_BASE_URL and that the backend FLUTTER_WEB_ORIGIN matches this site URL.';
     }
     return error.toString();
   }
@@ -549,7 +554,7 @@ class _VisitorHomeState extends State<VisitorHome> {
                     child: Column(
                       children: [
                         Text(
-                          'We couldn’t load the park list. Check your connection and try again.',
+                          _error!,
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: _navy),
                         ),
