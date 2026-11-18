@@ -1,19 +1,18 @@
-# Wonderla QR-code module
+# Wonderla park API
 
-A per-park, QR-driven info experience with a single admin panel to configure
-each park. Parks are data-driven — new parks can be added any time from the
-admin UI, so this scales as Wonderla opens more locations.
+The Next.js project provides the park data, authentication, and upload APIs for
+the Flutter app. The former Next.js QR guest and admin pages have been removed;
+the Flutter app is the only user interface.
 
 ## Routes
 
 | Route                    | What it is                                              |
 |--------------------------|---------------------------------------------------------|
-| `/qr-code`               | Park directory (lists active parks) + link to admin     |
-| `/qr-code/<park-slug>`   | The guest experience for one park (point QR codes here) |
-| `/qr-code/admin`         | Admin login + configuration dashboard                   |
+| `/`                      | Redirects to `FLUTTER_WEB_ORIGIN` when configured       |
+| `/qr-code/api/...`       | Park data, login, users, settings, and upload APIs       |
 
-**QR codes:** generate one per park pointing at `https://<your-domain>/qr-code/<slug>`,
-e.g. `/qr-code/bengaluru`, `/qr-code/chennai`.
+Use the Flutter frontend for visitor and admin workflows. QR guest pages are
+not served by this backend.
 
 ## Seeded parks
 
@@ -32,7 +31,7 @@ later only means reimplementing `_lib/store.ts`.
 
 ## Users & roles
 
-Two roles, managed at `/qr-code/admin`:
+Two roles, managed in the Flutter app:
 
 - **superadmin** — full access: edit any park, add/delete parks, toggle a
   park active/inactive, and create/delete users (Admin → **Users** tab).
@@ -40,10 +39,9 @@ Two roles, managed at `/qr-code/admin`:
   (rides, events, menu, wait times, etc.). Cannot add/delete parks, cannot
   change the active flag, and has no Users tab.
 
-**Creating park-level users:** sign in as superadmin → **Users** tab →
-*Add user* → set username/password, pick role **Park user**, choose the park.
-That user then signs in at the same `/qr-code/admin` and sees only their
-park's editor.
+**Creating park-level users:** sign in as superadmin in the Flutter app, open
+the **Users** tab, then add a park user and assign a park. That user signs in
+through the Flutter app and sees only their park's editor.
 
 Users live in `data/qr-code/users.json`; passwords are salted + scrypt-hashed
 (never stored in plaintext). On first run a single superadmin is seeded from

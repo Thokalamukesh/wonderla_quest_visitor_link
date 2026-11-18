@@ -62,5 +62,11 @@ flutter run --dart-define=API_BASE_URL=https://your-site.example
 
 The CMS uses the backend's admin login and session cookie. It supports superadmin and park editor roles, park creation/deletion and active status, park content CRUD, map image/places/zones, users, Google Maps settings, image uploads up to 5 MB, and video uploads up to 50 MB (MP4, WebM, or MOV). Uploads are saved under the backend's `public/uploads` folder locally. The app contains no admin password or server secret.
 
-The existing backend must be reachable for park content, admin login, uploads, and persistent park/user data. Flutter web on a different origin needs the backend to permit credentialed CORS. QR URLs continue to resolve to the React website's `/qr-code/{slug}` fallback.
+The existing backend must be reachable for park content, admin login, uploads, and persistent park/user data. Flutter web on a different origin needs the backend to permit credentialed CORS. The backend serves API routes only; the removed Next.js QR-code pages are no longer available.
+
+## Vercel deployment
+
+Create the Flutter frontend Vercel project with this repository's root as its Root Directory. The root `vercel.json` builds and serves only the Flutter web app from `build/web`; it does not expose the Next.js QR-code pages. Set `API_BASE_URL` in the frontend project's environment variables to the deployed backend origin, for example `https://wonderla-api.vercel.app`.
+
+Deploy the backend as a separate Vercel project with Root Directory set to `backend`. Set `FLUTTER_WEB_ORIGIN` there to the exact Flutter frontend origin, and configure `QR_ADMIN_USERNAME` and `QR_ADMIN_PASSWORD`. Keep the backend deployment for API requests; visitors should use the Flutter frontend URL.
 
